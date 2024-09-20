@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-import * as path from  'path';
 import * as axios from 'axios';
 import * as readline from 'readline';
 import { HttpsProxyAgent } from 'https-proxy-agent';
