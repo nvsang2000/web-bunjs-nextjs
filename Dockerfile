@@ -20,19 +20,6 @@ RUN npx prisma generate
 # Build Next.js cho production
 RUN bun run build
 
-# Giai đoạn thứ hai: chạy ứng dụng Next.js với phiên bản build
-FROM oven/bun:1 AS production
-
-WORKDIR /app
-
-# Sao chép từ giai đoạn build
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/public ./public
-COPY --from=build /app/next.config.js ./
-COPY --from=build /app/package.json ./
-COPY --from=build /app/prisma ./prisma
-
 # Mở cổng ứng dụng Next.js
 EXPOSE 3000
 
