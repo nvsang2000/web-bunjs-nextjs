@@ -1,5 +1,5 @@
 # Sử dụng hình ảnh Bun.js chính thức
-FROM jarredsumner/bun:latest as build
+FROM oven/bun:1 AS base
 
 # Đặt thư mục làm việc trong container
 WORKDIR /app
@@ -21,7 +21,7 @@ RUN npx prisma generate
 RUN bun run build
 
 # Giai đoạn thứ hai: chạy ứng dụng Next.js với phiên bản build
-FROM jarredsumner/bun:latest
+FROM oven/bun:1 AS production
 
 WORKDIR /app
 
