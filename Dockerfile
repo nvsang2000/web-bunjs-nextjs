@@ -8,14 +8,14 @@ WORKDIR /app
 COPY package.json bun.lockb* ./
 
 # 4. Cài đặt dependencies bằng Bun
-RUN yarn install
+RUN bun install
 
 # 5. Copy toàn bộ mã nguồn ứng dụng vào container
 COPY . .
 
 # 6. Build ứng dụng Next.js
-RUN yarn run build
-RUN yarn run postinstall
+RUN bun run build
+RUN bun run postinstall
 
 # 9. Expose cổng mà ứng dụng sẽ chạy
 EXPOSE 3000
