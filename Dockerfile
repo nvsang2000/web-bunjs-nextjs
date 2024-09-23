@@ -15,7 +15,7 @@ COPY . .
 
 # 6. Build ứng dụng Next.js
 RUN bun run build
-
+RUN bun postinstall
 
 # 9. Expose cổng mà ứng dụng sẽ chạy
 EXPOSE 3000
