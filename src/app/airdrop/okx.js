@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import * as readline from 'readline';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
-class OKX {
+export class OKX {
     headers() {
         return {
             "Accept": "application/json",
@@ -349,4 +349,3 @@ class OKX {
     }
 }
 
-module.exports = new OKX()

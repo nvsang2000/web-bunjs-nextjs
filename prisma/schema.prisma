@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Policy {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(128)
+  isActive    Boolean   @default(true)
+  permissions Json?
+  createdAt   DateTime? @default(now()) @db.Timestamptz()
+  updatedAt   DateTime? @updatedAt @db.Timestamptz()
+  updatedById String?   @db.Uuid
+  createrId   String?   @db.Uuid
+  users       User[]    @relation("OneUserOnePolicy")
+
+  @@map("policies")
+}
+
+model User {
+  id        String     @id @default(uuid()) @db.Uuid
+  fullName  String     @db.VarChar(255)
+  email     String     @unique @db.VarChar(255)
+  phone     String     @unique @db.VarChar(24)
+  username  String     @unique @db.VarChar(128)
+  password  String     @db.VarChar(255)
+  role      Role       @default(USER)
+  thumbnail String?    @db.VarChar(400)
+  isActive  Boolean?   @default(true)
+  lastSeen  DateTime?  @default(now()) @db.Timestamptz()
+  policyId  Int?
+  createrId String?    @db.Uuid
+  authId    String?    @db.Uuid
+  updatedAt DateTime?  @updatedAt @db.Timestamptz()
+  createdAt DateTime?  @default(now()) @db.Timestamptz()
+  policy    Policy?    @relation("OneUserOnePolicy", fields: [policyId], references: [id])
+  auth      AuthToken? @relation("OneUserOneAuth")
+
+  @@index([email])
+  @@index([phone])
+  @@index([username])
+  @@map("users")
+}
+
+model AuthToken {
+  id           String    @id @default(uuid()) @db.Uuid
+  accessToken  String
+  refreshToken String
+  teleId       String
+  proxy        String
+  requesId     String
+  userId       String    @unique @db.Uuid
+  updatedAt    DateTime? @updatedAt @db.Timestamptz()
+  createdAt    DateTime? @default(now()) @db.Timestamptz()
+  user         User      @relation("OneUserOneAuth", fields: [userId], references: [id])
+
+  @@map("auth_token")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
