@@ -1,31 +1,33 @@
 "use client";
 import NextLink from "next/link";
 import { useState } from "react";
-import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import { RegisterForm, LoginForm } from "@/components";
 import Cookies from "js-cookie";
-import { Login } from "../actions/auhs";
+import { message } from "antd";
+import { Login } from "@/actions/auth";
+
 
 export default function AuthForm() {
   const { push } = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
 
- const login = async (payload: any) => {
-
-    setLoading(true)
+  const login = async (payload: any) => {
+    setLoading(true);
     try {
-      const { token } = await Login(payload)
-      if(token) {
-        Cookies.set('acc', token, { expires: 30 })
-      } 
-      setLoading(false)
+      const { token, code, mess } = await Login(payload);
+      if (code !== 200) message.error(mess);
+      else {
+        if (token) Cookies.set("acc", token, { expires: 30 });
+        push('/')
+      }
+      setLoading(false);
     } catch (e: any) {
-      console.log(e.message)
-      setLoading(false)
+      message.error("Error server")
+      setLoading(false);
     }
-  }
+  };
   const register = () => {};
   return (
     <div className="mt-[60px] flex flex-col items-center justify-center  py-2">
@@ -34,7 +36,9 @@ export default function AuthForm() {
           className="flex justify-center items-center gap-1 text-[20px] mb-[10px]"
           href="/"
         >
-          <p className="font-bold !text-[var(--green)]">Tool Airdrop Telegram</p>
+          <p className="font-bold !text-[var(--green)]">
+            Tool Airdrop Telegram
+          </p>
         </NextLink>
         <div className="mt-[20px]">
           {isLogin ? (
