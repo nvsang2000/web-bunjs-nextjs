@@ -1,38 +1,24 @@
-# use the official Bun image
-# see all versions at https://hub.docker.com/r/oven/bun/tags
+# 1. Sử dụng image Bun chính thức làm base image
 FROM oven/bun:1 AS base
-WORKDIR /usr/src/app
 
-# install dependencies into temp directory
-# this will cache them and speed up future builds
-FROM base AS install
-RUN mkdir -p /temp/dev
-COPY package.json bun.lockb /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
+# 2. Tạo thư mục ứng dụng và chuyển vào thư mục đó
+WORKDIR /app
 
-# install with --production (exclude devDependencies)
-RUN mkdir -p /temp/prod
-COPY package.json bun.lockb /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+# 3. Copy file `package.json` và `bun.lockb` (nếu có) vào container
+COPY package.json bun.lockb* ./
 
-# copy node_modules from temp directory
-# then copy all (non-ignored) project files into the image
-FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
+# 4. Cài đặt dependencies bằng Bun
+RUN bun install
+
+# 5. Copy toàn bộ mã nguồn ứng dụng vào container
 COPY . .
 
-# [optional] tests & build
-ENV NODE_ENV=production
-RUN bun test
+# 6. Build ứng dụng Next.js
 RUN bun run build
 
-# copy production dependencies and source code into final image
-FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/index.ts .
-COPY --from=prerelease /usr/src/app/package.json .
 
-# run the app
-USER bun
-EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "start" ]
+# 9. Expose cổng mà ứng dụng sẽ chạy
+EXPOSE 3000
+
+# 10. Chạy ứng dụng Next.js bằng Bun
+CMD ["bun", "run", "start"]
