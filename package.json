@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "migrate:deploy": "npx prisma migrate deploy && npx prisma generate"
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.1",

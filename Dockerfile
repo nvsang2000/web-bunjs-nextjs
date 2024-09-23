@@ -1,23 +1,40 @@
-# 1. Sử dụng image Bun chính thức làm base image
-FROM oven/bun:1 AS base
+# Sử dụng hình ảnh Bun.js chính thức
+FROM jarredsumner/bun:latest as build
 
-# 2. Tạo thư mục ứng dụng và chuyển vào thư mục đó
+# Đặt thư mục làm việc trong container
 WORKDIR /app
 
-# 3. Copy file `package.json` và `bun.lockb` (nếu có) vào container
-COPY package.json bun.lockb* ./
+# Sao chép các file cần thiết để xây dựng ứng dụng
+COPY package.json bun.lockb ./
+COPY prisma ./prisma
+COPY .env ./
+COPY next.config.js ./ 
+COPY tsconfig.json ./
+COPY public ./public
+COPY src ./src
 
-# 4. Cài đặt dependencies bằng Bun
+# Cài đặt các package và thiết lập Prisma client
 RUN bun install
+RUN npx prisma generate
 
-# 5. Copy toàn bộ mã nguồn ứng dụng vào container
-COPY . .
-
-# 6. Build ứng dụng Next.js
+# Build Next.js cho production
 RUN bun run build
 
-# 9. Expose cổng mà ứng dụng sẽ chạy
+# Giai đoạn thứ hai: chạy ứng dụng Next.js với phiên bản build
+FROM jarredsumner/bun:latest
+
+WORKDIR /app
+
+# Sao chép từ giai đoạn build
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/public ./public
+COPY --from=build /app/next.config.js ./
+COPY --from=build /app/package.json ./
+COPY --from=build /app/prisma ./prisma
+
+# Mở cổng ứng dụng Next.js
 EXPOSE 3000
 
-# 10. Chạy ứng dụng Next.js bằng Bun
+# Lệnh khởi động ứng dụng Next.js
 CMD ["bun", "run", "start"]
