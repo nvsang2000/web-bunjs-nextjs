@@ -14,8 +14,8 @@ RUN bun install
 COPY . .
 
 # 6. Build ứng dụng Next.js
-RUN bun build
-RUN bun migrate:deploy
+RUN bun run build
+RUN bun run migrate:deploy
 
 # 9. Expose cổng mà ứng dụng sẽ chạy
 EXPOSE 3000
