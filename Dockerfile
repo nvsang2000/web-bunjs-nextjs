@@ -10,7 +10,6 @@ COPY prisma ./prisma
 COPY .env ./
 COPY next.config.js ./ 
 COPY tsconfig.json ./
-COPY public ./public
 COPY src ./src
 
 # Cài đặt các package và thiết lập Prisma client
