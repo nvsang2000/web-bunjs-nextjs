@@ -12,6 +12,7 @@
     "migrate:deploy": "npx prisma migrate deploy && npx prisma generate"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.5.1",
     "@ant-design/nextjs-registry": "^1.0.1",
     "@nextui-org/button": "^2.0.38",
     "@nextui-org/modal": "^2.0.41",

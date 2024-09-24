@@ -20,7 +20,7 @@ export default function AuthForm() {
       if (code !== 200) message.error(mess);
       else {
         if (token) Cookies.set("acc", token, { expires: 30 });
-        push('/')
+        push('/dashboard')
       }
       setLoading(false);
     } catch (e: any) {

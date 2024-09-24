@@ -1,11 +1,8 @@
 "use client";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
-import { useState } from "react";
-import { EMAIL_PATTERN } from "../../../constants";
 
 export default function LoginForm({ onSubmit, loading = false }: any) {
-  const [loginIsEmail, setLoginIsEmail] = useState(false);
   const [form] = Form.useForm();
   return (
     <Form
@@ -16,37 +13,17 @@ export default function LoginForm({ onSubmit, loading = false }: any) {
       colon={false}
       form={form}
     >
-      {!loginIsEmail ? (
-        <Form.Item
-          name="username"
-          rules={[{ required: true, message: "Please enter username!" }]}
-        >
-          <Input
-            className="!rounded-[4px]"
-            prefix={<UserOutlined />}
-            size={"large"}
-            placeholder="Enter username!"
-          />
-        </Form.Item>
-      ) : (
-        <Form.Item
-          name="email"
-          rules={[
-            { required: true, message: "Please enter email!" },
-            {
-              pattern: EMAIL_PATTERN,
-              message: "Please enter the correct format email!",
-            },
-          ]}
-        >
-          <Input
-            className="!rounded-[4px]"
-            prefix={<UserOutlined />}
-            size={"large"}
-            placeholder="Enter email!"
-          />
-        </Form.Item>
-      )}
+      <Form.Item
+        name="username"
+        rules={[{ required: true, message: "Please enter username!" }]}
+      >
+        <Input
+          className="!rounded-[4px]"
+          prefix={<UserOutlined />}
+          size={"large"}
+          placeholder="Enter username, email, phone!"
+        />
+      </Form.Item>
 
       <Form.Item
         name="password"

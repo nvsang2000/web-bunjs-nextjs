@@ -8,11 +8,16 @@ const prisma = new PrismaClient();
 
 export async function Login(infor: any) {
   const { username, password } = infor;
+  console.log("infor", infor)
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
-        username,
+        OR: [
+          { username: username },
+          { email: username },
+          { phone: username },
+        ],
       },
     });
 
