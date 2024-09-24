@@ -1,63 +1,27 @@
 "use client"
-import Image from "next/image";
-import { Layout } from 'antd';
-
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Row,
-} from "antd";
 import React, { useEffect } from "react";
+import Link from "next/link";
+import { InitAdmin } from "../actions/seed";
+import { Button } from "antd";
 
+export default async function Home() {
 
-const { Content } = Layout;
-const { TextArea } = Input;
-
-export default function Home() {
-  const [form] = Form.useForm();
-
-
-  const handleSubmit = (values: any) => {
-    console.log("values", values)
-    
-    fetch('/api/tool')
-    .then((res) => res.json())
-    .then((data) => console.log("data"))
-    .catch((err) => console.log("data"));
+  const generateInit = async () => {
+    await InitAdmin()
   }
-  return (
-    <Layout>
-      <Content>
-        <div className="mt-[20px] p-[20px]">
-        <Form
-          layout={"vertical"}
-          colon={false}
-          form={form}
-          initialValues={{}}
-          onFinish={handleSubmit}
-        >
-          <Row gutter={20}>
-            <Col xs={24} lg={24}>
-              <Form.Item name="reuqestId" rules={[{ required: true, message: "Please enter id!" }]}>
-                <TextArea size="large" rows={4} placeholder="Enter reques id or id!" />
-              </Form.Item>
-              
-              <Form.Item name="proxy" rules={[{ required: true, message: "Please enter proxy!" }]}>
-                <TextArea size="large" rows={4} placeholder="Enter proxy!" />
-              </Form.Item>
 
-            </Col>
-          </Row>
-          <Row gutter={40} className={"pb-[40px] pl-[20px]"}>
-            <Button type={"primary"} htmlType={"submit"}>
-              Submit
-            </Button>
-          </Row>
-        </Form>
-        </div>
-      </Content>
-    </Layout>
+  return (
+    <div className="p-[40px]">
+      <div>
+        Welcome to Diep Minh's airdrop farming tool, please log in to use the
+        service.
+        <span>
+          <Link href={"/login"} className="text-[var(--green)]">
+            Login here!
+          </Link>
+        </span>
+      </div>
+      <div className="mt-[20px]"><Button onClick={generateInit}>Generate addmin</Button></div>
+    </div>
   );
 }
