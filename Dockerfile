@@ -11,7 +11,7 @@ COPY src ./src
 
 # Cài đặt các package và thiết lập Prisma client
 RUN bun install
-RUN npx prisma generate
+RUN bun run postinstall
 
 # Build Next.js cho production
 RUN bun run build
