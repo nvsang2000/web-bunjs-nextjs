@@ -1,4 +1,4 @@
-import "@/app/globals.css";
+import "../../../app/globals.css";
 import type { Metadata } from "next";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { redirect } from "next/navigation";
