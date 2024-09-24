@@ -6,6 +6,7 @@ WORKDIR /app
 
 # 3. Copy file `package.json` và `bun.lockb` (nếu có) vào container
 COPY package.json bun.lockb* ./
+COPY prisma ./prisma
 
 # 4. Cài đặt dependencies bằng Bun
 RUN bun install
