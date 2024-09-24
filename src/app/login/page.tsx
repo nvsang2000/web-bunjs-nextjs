@@ -2,10 +2,10 @@
 import NextLink from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { RegisterForm, LoginForm } from "@/components";
 import Cookies from "js-cookie";
 import { message } from "antd";
-import { Login } from "@/actions/auth";
+import { Login } from "../../actions/auth";
+import { LoginForm, RegisterForm } from "../../components";
 
 
 export default function AuthForm() {

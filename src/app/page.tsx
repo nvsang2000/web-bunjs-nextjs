@@ -15,7 +15,6 @@ import React, { useEffect } from "react";
 const { Content } = Layout;
 const { TextArea } = Input;
 
-
 export default function Home() {
   const [form] = Form.useForm();
 

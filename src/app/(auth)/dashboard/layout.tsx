@@ -2,7 +2,8 @@ import "../../../app/globals.css";
 import type { Metadata } from "next";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/actions/auth";
+import { getCurrentUser } from "../../../actions/auth";
+
 
 export const metadata: Metadata = {
   title: "Dashboard",

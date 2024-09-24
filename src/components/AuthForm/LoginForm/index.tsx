@@ -1,8 +1,8 @@
 "use client";
-import { EMAIL_PATTERN } from "@/constants";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import { useState } from "react";
+import { EMAIL_PATTERN } from "../../../constants";
 
 export default function LoginForm({ onSubmit, loading = false }: any) {
   const [loginIsEmail, setLoginIsEmail] = useState(false);
