@@ -6,10 +6,6 @@ import { Button } from "antd";
 
 export default async function Home() {
 
-  const generateInit = async () => {
-    await InitAdmin()
-  }
-
   return (
     <div className="p-[40px]">
       <div>
@@ -21,7 +17,6 @@ export default async function Home() {
           </Link>
         </span>
       </div>
-      <div className="mt-[20px]"><Button onClick={generateInit}>Generate addmin</Button></div>
     </div>
   );
 }
