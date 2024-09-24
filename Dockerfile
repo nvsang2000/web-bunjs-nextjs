@@ -7,9 +7,6 @@ WORKDIR /app
 # Sao chép các file cần thiết để xây dựng ứng dụng
 COPY package.json bun.lockb ./
 COPY prisma ./prisma
-COPY .env ./
-COPY next.config.js ./ 
-COPY tsconfig.json ./
 COPY src ./src
 
 # Cài đặt các package và thiết lập Prisma client
