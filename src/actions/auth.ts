@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 
 export async function Login(infor: any) {
   const { username, password } = infor;
-  console.log("infor", infor)
 
   try {
     const user = await prisma.user.findFirst({
@@ -33,7 +32,7 @@ export async function Login(infor: any) {
     const token = await signJWT({ userId: user.id });
     return { token, code: 200 };
   } catch (error) {
-    return { mess: "Error server", code: 400 };
+    return { mess: "Error server", code: 500 };
   }
 }
 

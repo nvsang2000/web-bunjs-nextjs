@@ -1,8 +1,7 @@
-import * as axios from 'axios';
-import * as readline from 'readline';
-import { HttpsProxyAgent } from 'https-proxy-agent';
-
-export class OKX {
+const axios = require('axios');
+const readline = require('readline');
+const { HttpsProxyAgent } = require('https-proxy-agent');
+export default class OKX {
     headers() {
         return {
             "Accept": "application/json",

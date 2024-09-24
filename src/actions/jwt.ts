@@ -27,7 +27,7 @@ export async function decodedJWT(token: string) {
 export async function signJWT(payload: any) {
   try {
     const token = jwt.sign(payload, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "30d",
     });
     return token;
   } catch (error) {

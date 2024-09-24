@@ -16,7 +16,6 @@ export async function InitAdmin() {
         role: "ADMIN",
       },
     });
-    console.log("result", result)
 
     return result;
   } catch (error) {
