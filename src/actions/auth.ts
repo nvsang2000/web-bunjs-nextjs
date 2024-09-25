@@ -19,19 +19,18 @@ export async function Login(infor: any) {
     });
 
     if (!user) {
-      return { mess: "Incorrect username or password", code: 400 };
+      return { mess: "Incorrect username or password" };
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return { mess: "Incorrect username or password", code: 400 };
+      return { mess: "Incorrect username or password" };
     }
 
     const token = await signJWT({ userId: user.id });
-    return { token, code: 200 };
+    return { token };
   } catch (error) {
-    console.log("error", error)
-    return { mess: "Error server", code: 500 };
+    return { mess: "Error server" };
   }
 }
 
@@ -39,10 +38,10 @@ export async function getCurrentUser() {
   const cookieStore = cookies();
   const token = cookieStore.get("acc")?.value;
 
-  if(!token) return { code: 401, mess: "Token has expired!" }
+  if(!token) return { mess: "Token has expired!" }
   try {
     const userId = await decodedJWT(token);
-    if(!userId)  return { code: 401, mess: "Token has expired!" }
+    if(!userId)  return { mess: "Token has expired!" }
 
     const user = await prisma.user.findUnique({
       where: { id: userId, isActive: true },
@@ -54,9 +53,19 @@ export async function getCurrentUser() {
         role: true,
       }
     });
-    if(!user) return { code: 400, mess: "Account does not exist!" }
-    return { code: 200, data: user }
+    if(!user) return { mess: "Account does not exist!" }
+    return { data: user }
   } catch (error) {
-    return { code: 500, mess: "Error server!" }
+    return { mess: "Error server!" }
   }
+}
+
+export async function getUserId() {
+  const cookieStore = cookies();
+  const token = cookieStore.get("acc")?.value;
+  if(token) {
+    const userId = await decodedJWT(token);
+    return userId
+  } else return undefined
+  
 }

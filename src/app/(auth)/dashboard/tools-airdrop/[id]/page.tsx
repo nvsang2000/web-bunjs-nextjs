@@ -4,11 +4,10 @@ import { message } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ToolAirdropForm } from "../../../../../components";
-import runToolOKX from "../../../../../actions/tool";
+import { runToolOKX } from "../../../../../actions/tool";
 
 export default function DetailBlogPage({ params }: { params: { id: string } }) {
   const [initialValues, setInitialValues] = useState<any>({});
-  const { back } = useRouter();
   const id = params?.id;
 
   useEffect(() => {
@@ -20,8 +19,8 @@ export default function DetailBlogPage({ params }: { params: { id: string } }) {
 
   const handleSubmit = async (values: any) => {
     try {
-      const { mess, code } = await runToolOKX(values);
-      if (code === 200) message.info(mess);
+      const { mess, data } = await runToolOKX(values);
+      if (data) message.info(mess);
     } catch (error) {
       message.error("Error server!");
     }

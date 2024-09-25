@@ -1,8 +1,7 @@
 const axios = require('axios');
 const readline = require('readline');
-const { HttpsProxyAgent } = require('https-proxy-agent');
 
-const  defaultHeader = () => {
+function headersDefault() {
     return {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br, zstd",
@@ -25,25 +24,9 @@ const  defaultHeader = () => {
     };
 }
 
-async function  checkProxyIP(proxy) {
-    try {
-        const proxyAgent = new HttpsProxyAgent(proxy);
-        const response = await axios.get('https://api.ipify.org?format=json', {
-            httpsAgent: proxyAgent
-        });
-        if (response.status === 200) {
-            return response.data.ip;
-        } else {
-            throw new Error(`Không thể kiểm tra IP của proxy. Status code: ${response.status}`);
-        }
-    } catch (error) {
-        throw new Error(`Error khi kiểm tra IP của proxy: ${error.message}`);
-    }
-}
-
-async function postToOKXAPI(extUserId, extUserName, queryId, proxy) {
+async function postToOKXAPI(extUserId, extUserName, queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/info?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     const payload = {
         "extUserId": extUserId,
         "extUserName": extUserName,
@@ -51,35 +34,32 @@ async function postToOKXAPI(extUserId, extUserName, queryId, proxy) {
         "linkCode": "31347852"
     };
 
-    const agent = new HttpsProxyAgent(proxy);
-    return axios.post(url, payload, { headers, httpsAgent: agent });
+    return axios.post(url, payload, { headers });
 }
 
-async function assessPrediction(extUserId, predict, queryId, proxy) {
+async function assessPrediction(extUserId, predict, queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/assess?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     const payload = {
         "extUserId": extUserId,
         "predict": predict,
         "gameId": 1
     };
 
-    const agent = new HttpsProxyAgent(proxy);
-    return axios.post(url, payload, { headers, httpsAgent: agent });
+    return axios.post(url, payload, { headers });
 }
 
-async function checkDailyRewards(extUserId, queryId, proxy) {
+async function checkDailyRewards(extUserId, queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/tasks?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
-    const agent = new HttpsProxyAgent(proxy);
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     try {
-        const response = await axios.get(url, { headers, httpsAgent: agent });
+        const response = await axios.get(url, { headers });
         const tasks = response.data.data;
         const dailyCheckInTask = tasks.find(task => task.id === 4);
         if (dailyCheckInTask) {
             if (dailyCheckInTask.state === 0) {
                 log('Bắt đầu checkin...');
-                await performCheckIn(extUserId, dailyCheckInTask.id, queryId, proxy);
+                await performCheckIn(extUserId, dailyCheckInTask.id, queryId);
             } else {
                 log('Hôm nay bạn đã điểm danh rồi!');
             }
@@ -89,17 +69,16 @@ async function checkDailyRewards(extUserId, queryId, proxy) {
     }
 }
 
-async function performCheckIn(extUserId, taskId, queryId, proxy) {
+async function performCheckIn(extUserId, taskId, queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/task?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     const payload = {
         "extUserId": extUserId,
         "id": taskId
     };
 
-    const agent = new HttpsProxyAgent(proxy);
     try {
-        await axios.post(url, payload, { headers, httpsAgent: agent });
+        await axios.post(url, payload, { headers });
         log('Điểm danh hàng ngày thành công!');
     } catch (error) {
         log(`Lỗi rồi:: ${error.message}`);
@@ -117,7 +96,7 @@ async function sleep(ms) {
 async function waitWithCountdown(seconds) {
     for (let i = seconds; i >= 0; i--) {
         readline.cursorTo(process.stdout, 0);
-        process.stdout.write(`=${i}=`);
+        process.stdout.write(`${i} giây `);
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
     console.log('');
@@ -132,7 +111,7 @@ async function Countdown(seconds) {
     console.log('');
 }
 
-function extractUserData(queryId) {
+ function extractUserData(queryId) {
     const urlParams = new URLSearchParams(queryId);
     const user = JSON.parse(decodeURIComponent(urlParams.get('user')));
     return {
@@ -141,12 +120,11 @@ function extractUserData(queryId) {
     };
 }
 
-async function getBoosts(queryId, proxy) {
+async function getBoosts(queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/boosts?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
-    const agent = new HttpsProxyAgent(proxy);
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     try {
-        const response = await axios.get(url, { headers, httpsAgent: agent });
+        const response = await axios.get(url, { headers });
         return response.data.data;
     } catch (error) {
         console.log(`Lỗi lấy thông tin boosts: ${error.message}`);
@@ -154,14 +132,13 @@ async function getBoosts(queryId, proxy) {
     }
 }
 
-async function useBoost(queryId, proxy) {
+async function useBoost(queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/boost?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     const payload = { id: 1 };
 
-    const agent = new HttpsProxyAgent(proxy);
     try {
-        const response = await axios.post(url, payload, { headers, httpsAgent: agent });
+        const response = await axios.post(url, payload, { headers });
         if (response.data.code === 0) {
             log('Reload Fuel Tank thành công!'.yellow);
             await Countdown(5);
@@ -173,14 +150,13 @@ async function useBoost(queryId, proxy) {
     }
 }
 
-async function upgradeFuelTank(queryId, proxy) {
+async function upgradeFuelTank(queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/boost?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     const payload = { id: 2 };
 
-    const agent = new HttpsProxyAgent(proxy);
     try {
-        const response = await axios.post(url, payload, { headers, httpsAgent: agent });
+        const response = await axios.post(url, payload, { headers });
         if (response.data.code === 0) {
             log('Nâng cấp Fuel Tank thành công!'.yellow);
         } else {
@@ -191,14 +167,13 @@ async function upgradeFuelTank(queryId, proxy) {
     }
 }
 
-async function upgradeTurbo(queryId, proxy) {
+async function upgradeTurbo(queryId) {
     const url = `https://www.okx.com/priapi/v1/affiliate/game/racer/boost?t=${Date.now()}`;
-    const headers = { ...defaultHeader(), 'X-Telegram-Init-Data': queryId };
+    const headers = { ...headersDefault(), 'X-Telegram-Init-Data': queryId };
     const payload = { id: 3 };
 
-    const agent = new HttpsProxyAgent(proxy);
     try {
-        const response = await axios.post(url, payload, { headers, httpsAgent: agent });
+        const response = await axios.post(url, payload, { headers });
         if (response.data.code === 0) {
             log('Nâng cấp Turbo Charger thành công!'.yellow);
         } else {
@@ -209,11 +184,10 @@ async function upgradeTurbo(queryId, proxy) {
     }
 }
 
-async function getCurrentPrice(proxy) {
+async function getCurrentPrice() {
     const url = 'https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT';
-    const agent = new HttpsProxyAgent(proxy);
     try {
-        const response = await axios.get(url, { httpsAgent: agent });
+        const response = await axios.get(url);
         if (response.data.code === '0' && response.data.data && response.data.data.length > 0) {
             return parseFloat(response.data.data[0].last);
         } else {
@@ -226,8 +200,7 @@ async function getCurrentPrice(proxy) {
 
 
 export default async function runJobOKX(requestId) {
-    const userData = requestId;
-    const proxyData = proxy;
+    const userData = requestId
 
     // const nangcapfueltank = await askQuestion('Bạn có muốn nâng cấp fuel tank không? (y/n): ');
     const hoinangcap = false;
@@ -327,5 +300,4 @@ export default async function runJobOKX(requestId) {
         }
         await waitWithCountdown(600);
     }
-}
-
+} 

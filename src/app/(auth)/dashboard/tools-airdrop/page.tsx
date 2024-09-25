@@ -4,7 +4,7 @@ import { Button, Col, Row, Space, Switch, Table } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import dayjsInstance from "../../../../utils/dayjs";
-import { paginateUser } from "../../../../actions/users";
+import { paginateToolAirdrop } from "../../../../actions/tool";
 
 export default function UsersPage({
   searchParams,
@@ -13,12 +13,10 @@ export default function UsersPage({
 }) {
   const { push, replace } = useRouter();
   const [users, setUsers] = useState<any>([]);
-  const [meta, setMeta] = useState({});
-  const pathname = usePathname();
   const parmas = useSearchParams();
 
   const loadData = async() => {
-    const { data } = await paginateUser()
+    const { data } = await paginateToolAirdrop()
     if(data) {
       setUsers(data)
     }
@@ -29,41 +27,23 @@ export default function UsersPage({
   }, [])
 
   const columns = [
-
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "Tool",
+      dataIndex: "nameTool",
+      key: "nameTool",
       width: 250,
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "proxy",
+      dataIndex: "proxy",
+      key: "proxy",
       width: 250,
     },
     {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
+      title: "status",
+      dataIndex: "status",
+      key: "status",
       width: 250,
-    },
-    {
-      title: "Active",
-      dataIndex: "active",
-      key: "active",
-      width: 150,
-      render: (_: any, record: any) => {
-        return (
-          <div>
-            <Switch
-              size="small"
-              checked={record?.active}
-              // onChange={(checked) => onActiveChange(checked, record?.id)}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Created",
@@ -85,7 +65,7 @@ export default function UsersPage({
         <Row gutter={10} className={"mb-[8px]"}>
           <Col flex={1}>
             <div className={"text-[18px] font-medium"}>
-              Users
+              Tool JOB
             </div>
           </Col>
           <Col>

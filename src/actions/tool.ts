@@ -1,9 +1,22 @@
 "use server";
-import runJobOKX from './job/okx'
-export default async function runToolOKX(values: any) {
-  const { requestId } =  values
+import prisma from "../lib/connectPrisma";
+import { getUserId } from "./auth";
+import runJobOKX from "./job/okx";
+
+export async function runToolOKX(values: any) {
+  const { requestId } = values;
+
+  const userId = await getUserId();
+  if (!userId) return { mess: "Account does not exist!" };
+
   try {
-    console.log("values", values);
+    const result = await prisma.jobAirdrop.create({
+      data: {
+        ...values,
+        requestId: JSON.stringify(requestId),
+        userId: userId,
+      },
+    });
 
     setTimeout(() => {
       console.log("Worker job finished");
@@ -13,9 +26,20 @@ export default async function runToolOKX(values: any) {
       });
     }, 1000);
 
-    return { mess: "Running tool okx", code: 200 };
+    return { mess: `Running job id ${result?.id} tool okx`, data:result };
   } catch (error) {
     console.log(error);
-    return { mess: "Error server!", code: 500 };
+    return { mess: "Error server!" };
   }
+}
+
+
+export async function paginateToolAirdrop() {
+  try {
+      const result = await prisma.jobAirdrop.findMany({ });
+      return { mess: "success", data: result }
+  } catch (error) {
+      return { mess: "Error server" };
+  }
+  
 }

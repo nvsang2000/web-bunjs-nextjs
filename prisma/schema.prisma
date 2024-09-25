@@ -73,8 +73,8 @@ model JobAirdrop {
   status    JobStatus @default(OPEN)
   proxy     String?
   teleId    String?
-  requestId String?
-  userId    String    @unique @db.Uuid
+  requestId Json?
+  userId    String    @db.Uuid
   reopenAt  DateTime? @db.Timestamptz()
   updatedAt DateTime? @updatedAt @db.Timestamptz()
   createdAt DateTime? @default(now()) @db.Timestamptz()

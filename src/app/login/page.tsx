@@ -15,10 +15,10 @@ export default function AuthForm() {
   const login = async (payload: any) => {
     setLoading(true);
     try {
-      const { token, code, mess } = await Login(payload);
-      if (code !== 200) message.error(mess);
+      const { token, mess } = await Login(payload);
+      if (!token) message.error(mess);
       else {
-        if (token) Cookies.set("acc", token, { expires: 30 });
+        Cookies.set("acc", token, { expires: 30 });
         push("/dashboard");
       }
       setLoading(false);
