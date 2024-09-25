@@ -5,7 +5,6 @@ const connection = new Redis(process.env.REDIS_URL!);
 
 export const toolWorker = new Queue('sampleQueue', {
     connection,
-    
   });
 
 const worker = new Worker(
@@ -20,6 +19,7 @@ const worker = new Worker(
     concurrency: 5,
     removeOnComplete: { count: 1000 },
     removeOnFail: { count: 5000 },
+   
   }
 );
 
