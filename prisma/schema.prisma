@@ -28,23 +28,24 @@ model Policy {
 }
 
 model User {
-  id        String     @id @default(uuid()) @db.Uuid
-  fullName  String     @db.VarChar(255)
-  email     String     @unique @db.VarChar(255)
-  phone     String     @unique @db.VarChar(24)
-  username  String     @unique @db.VarChar(128)
-  password  String     @db.VarChar(255)
-  role      Role       @default(USER)
-  thumbnail String?    @db.VarChar(400)
-  isActive  Boolean?   @default(true)
-  lastSeen  DateTime?  @default(now()) @db.Timestamptz()
-  policyId  Int?
-  createrId String?    @db.Uuid
-  authId    String?    @db.Uuid
-  updatedAt DateTime?  @updatedAt @db.Timestamptz()
-  createdAt DateTime?  @default(now()) @db.Timestamptz()
-  policy    Policy?    @relation("OneUserOnePolicy", fields: [policyId], references: [id])
-  auth      AuthToken? @relation("OneUserOneAuth")
+  id         String       @id @default(uuid()) @db.Uuid
+  fullName   String       @db.VarChar(255)
+  email      String       @unique @db.VarChar(255)
+  phone      String       @unique @db.VarChar(24)
+  username   String       @unique @db.VarChar(128)
+  password   String       @db.VarChar(255)
+  role       Role         @default(USER)
+  thumbnail  String?      @db.VarChar(400)
+  isActive   Boolean?     @default(true)
+  lastSeen   DateTime?    @default(now()) @db.Timestamptz()
+  policyId   Int?
+  createrId  String?      @db.Uuid
+  authId     String?      @db.Uuid
+  updatedAt  DateTime?    @updatedAt @db.Timestamptz()
+  createdAt  DateTime?    @default(now()) @db.Timestamptz()
+  policy     Policy?      @relation("OneUserOnePolicy", fields: [policyId], references: [id])
+  auth       AuthToken?   @relation("OneUserOneAuth")
+  jobAirdrop JobAirdrop[] @relation("OneUserManyJob")
 
   @@index([email])
   @@index([phone])
@@ -57,8 +58,7 @@ model AuthToken {
   accessToken  String
   refreshToken String
   teleId       String
-  proxy        String
-  requesId     String
+  teleToken    String
   userId       String    @unique @db.Uuid
   updatedAt    DateTime? @updatedAt @db.Timestamptz()
   createdAt    DateTime? @default(now()) @db.Timestamptz()
@@ -67,7 +67,30 @@ model AuthToken {
   @@map("auth_token")
 }
 
+model JobAirdrop {
+  id        String    @id @default(uuid()) @db.Uuid
+  nameTool  String    @db.VarChar(255)
+  status    JobStatus @default(OPEN)
+  proxy     String?
+  teleId    String?
+  requestId String?
+  userId    String    @unique @db.Uuid
+  reopenAt  DateTime? @db.Timestamptz()
+  updatedAt DateTime? @updatedAt @db.Timestamptz()
+  createdAt DateTime? @default(now()) @db.Timestamptz()
+  user      User      @relation("OneUserManyJob", fields: [userId], references: [id])
+  @@map("job_airdrop")
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+enum JobStatus {
+  OPEN
+  RUNNING
+  PENDING
+  STOP
+  REOPEN
 }

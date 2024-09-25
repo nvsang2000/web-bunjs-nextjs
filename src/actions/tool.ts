@@ -1,13 +1,13 @@
 "use server";
 import runJobOKX from './job/okx'
 export default async function runToolOKX(values: any) {
-  const { proxy, requestId } =  values.jobAirdrop[0]
+  const { requestId } =  values
   try {
-    console.log("values", values.jobAirdrop[0]);
+    console.log("values", values);
 
     setTimeout(() => {
       console.log("Worker job finished");
-      runJobOKX(proxy, requestId).catch((err) => {
+      runJobOKX(requestId).catch((err) => {
         console.error(err);
         process.exit(1);
       });

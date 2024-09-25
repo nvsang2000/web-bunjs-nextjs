@@ -225,7 +225,7 @@ async function getCurrentPrice(proxy) {
 }
 
 
-export default async function runJobOKX(proxy, requestId) {
+export default async function runJobOKX(requestId) {
     const userData = requestId;
     const proxyData = proxy;
 
@@ -238,13 +238,11 @@ export default async function runJobOKX(proxy, requestId) {
         for (let i = 0; i < userData.length; i++) {
             const queryId = userData[i];
             const { extUserId, extUserName } = extractUserData(queryId);
-            const proxy = proxyData[i % proxyData.length];
             try {
-                const proxyIP = await checkProxyIP(proxy);
-                console.log(`========== Tài khoản ${i + 1} | ${extUserName} | IP: ${proxyIP} ==========`.blue);
-                await checkDailyRewards(extUserId, queryId, proxy);
+                console.log(`========== Tài khoản ${i + 1} | ${extUserName} ==========`.blue);
+                await checkDailyRewards(extUserId, queryId);
 
-                let boosts = await getBoosts(queryId, proxy);
+                let boosts = await getBoosts(queryId);
                 boosts.forEach(boost => {
                     log(`${boost.context.name.green}: ${boost.curStage}/${boost.totalStage}`);
                 });
@@ -252,46 +250,46 @@ export default async function runJobOKX(proxy, requestId) {
                 let fuelTank = boosts.find(boost => boost.id === 2);
                 let turbo = boosts.find(boost => boost.id === 3);
                 if (fuelTank && hoinangcap) {
-                    const balanceResponse = await postToOKXAPI(extUserId, extUserName, queryId, proxy);
+                    const balanceResponse = await postToOKXAPI(extUserId, extUserName, queryId);
                     const balancePoints = balanceResponse.data.data.balancePoints;
                     if (fuelTank.curStage < fuelTank.totalStage && balancePoints > fuelTank.pointCost) {
-                        await upgradeFuelTank(queryId, proxy);
+                        await upgradeFuelTank(queryId);
 
-                        boosts = await getBoosts(queryId, proxy);
+                        boosts = await getBoosts(queryId);
                         const updatedFuelTank = boosts.find(boost => boost.id === 2);
-                        const updatebalanceResponse = await postToOKXAPI(extUserId, extUserName, queryId, proxy);
+                        const updatebalanceResponse = await postToOKXAPI(extUserId, extUserName, queryId);
                         const updatedBalancePoints = updatebalanceResponse.data.data.balancePoints;
                         if (updatedFuelTank.curStage >= fuelTank.totalStage || updatedBalancePoints < fuelTank.pointCost) {
                             log('Không đủ điều kiện nâng cấp Fuel Tank!'.red);
                             continue;
                         }
                     } else {
-                        log('Không lấy được dữ liệu Fuel Tank!'.red);
+                        log('Không đủ điều kiện nâng cấp Fuel Tank!'.red);
                     }
                 }
                 if (turbo && hoiturbo) {
-                    const balanceResponse = await postToOKXAPI(extUserId, extUserName, queryId, proxy);
+                    const balanceResponse = await postToOKXAPI(extUserId, extUserName, queryId);
                     const balancePoints = balanceResponse.data.data.balancePoints;
                     if (turbo.curStage < turbo.totalStage && balancePoints > turbo.pointCost) {
-                        await upgradeTurbo(queryId, proxy);
+                        await upgradeTurbo(queryId);
 
-                        boosts = await getBoosts(queryId, proxy);
+                        boosts = await getBoosts(queryId);
                         const updatedTurbo = boosts.find(boost => boost.id === 3);
-                        const updatebalanceResponse = await postToOKXAPI(extUserId, extUserName, queryId, proxy);
+                        const updatebalanceResponse = await postToOKXAPI(extUserId, extUserName, queryId);
                         const updatedBalancePoints = updatebalanceResponse.data.data.balancePoints;
                         if (updatedTurbo.curStage >= turbo.totalStage || updatedBalancePoints < turbo.pointCost) {
                             log('Nâng cấp Turbo Charger không thành công!'.red);
                             continue;
                         }
                     } else {
-                        log('Không lấy được dữ liệu Turbo Charger!'.red);
+                        log('Không đủ điều kiện nâng cấp Turbo Charger!'.red);
                     }
                 }
                 
                 while (true) {
-                    const price1 = await getCurrentPrice(proxy);
+                    const price1 = await getCurrentPrice();
                     await sleep(4000);
-                    const price2 = await getCurrentPrice(proxy);
+                    const price2 = await getCurrentPrice();
 
                     let predict;
                     let action;
@@ -302,12 +300,11 @@ export default async function runJobOKX(proxy, requestId) {
                         predict = 1; // Buy
                         action = 'Mua';
                     }
-                    const response = await postToOKXAPI(extUserId, extUserName, queryId, proxy);
+                    const response = await postToOKXAPI(extUserId, extUserName, queryId);
                     const balancePoints = response.data.data.balancePoints;
                     log(`${'Balance Points:'.green} ${balancePoints}`);
 
-
-                    const assessResponse = await assessPrediction(extUserId, predict, queryId, proxy);
+                    const assessResponse = await assessPrediction(extUserId, predict, queryId);
                     const assessData = assessResponse.data.data;
                     const result = assessData.won ? 'Win'.green : 'Thua'.red;
                     const calculatedValue = assessData.basePoint * assessData.multiplier;
@@ -316,9 +313,9 @@ export default async function runJobOKX(proxy, requestId) {
                     if (assessData.numChance > 0) {
                         await Countdown(1);
                     } else if (assessData.numChance <= 0 && reloadFuelTank && reloadFuelTank.curStage < reloadFuelTank.totalStage) {
-                        await useBoost(queryId, proxy);
+                        await useBoost(queryId);
 
-                        boosts = await getBoosts(queryId, proxy);
+                        boosts = await getBoosts(queryId);
                         reloadFuelTank = boosts.find(boost => boost.id === 1);
                     } else {
                         break;
