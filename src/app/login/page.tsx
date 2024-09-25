@@ -23,7 +23,7 @@ export default function AuthForm() {
       }
       setLoading(false);
     } catch (e: any) {
-      message.error("Error server");
+      message.error(`Error server: ${e}`);
       setLoading(false);
     }
   };

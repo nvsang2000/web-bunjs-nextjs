@@ -1,10 +1,8 @@
 "use server";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { cookies } from "next/headers";
 import { decodedJWT, signJWT } from "./jwt";
-
-const prisma = new PrismaClient();
+import prisma from "../lib/connectPrisma";
 
 export async function Login(infor: any) {
   const { username, password } = infor;
@@ -32,6 +30,7 @@ export async function Login(infor: any) {
     const token = await signJWT({ userId: user.id });
     return { token, code: 200 };
   } catch (error) {
+    console.log("error", error)
     return { mess: "Error server", code: 500 };
   }
 }

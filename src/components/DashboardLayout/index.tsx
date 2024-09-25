@@ -28,7 +28,7 @@ export default function DashboardLayout({
     {
       key: "tools",
       icon: <RocketOutlined />,
-      label: <Link href={"/dashboard/tools"}>Tools</Link>,
+      label: <Link href={"/dashboard/tools-airdrop"}>Tools Airdrop</Link>,
       children: undefined,
     },
   ];
