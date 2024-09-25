@@ -2,7 +2,6 @@
 
 import { Button, Col, Row, Space, Switch, Table } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
 import React, { useEffect, useState } from "react";
 import dayjsInstance from "../../../../utils/dayjs";
 import { paginateUser } from "../../../../actions/users";
@@ -86,16 +85,13 @@ export default function UsersPage({
         <Row gutter={10} className={"mb-[8px]"}>
           <Col flex={1}>
             <div className={"text-[18px] font-medium"}>
-              {/* <span className={"mr-[10px] text-[color:var(--green)]"}>
-                {numberFormat(meta?.total || 0)}
-              </span> */}
               Users
             </div>
           </Col>
           <Col>
             <Button
               type="primary"
-              onClick={() => push(`/dashboard/users/create`)}
+              onClick={() => push(`/dashboard/tools-airdrop/create`)}
             >
               Create new
             </Button>
