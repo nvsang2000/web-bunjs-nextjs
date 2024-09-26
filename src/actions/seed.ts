@@ -2,7 +2,7 @@
 import bcrypt from "bcrypt";
 import prisma from "../lib/connectPrisma";
 
-export async function InitAdmin() {
+export async function initAdmin() {
   try {
     const result = await prisma.user.create({
       data: {

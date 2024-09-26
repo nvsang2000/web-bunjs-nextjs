@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, Col, Row, Space, Switch, Table } from "antd";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Button, Col, Row, Switch, Table } from "antd";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
-import dayjsInstance from "../../../../utils/dayjs";
-import { paginateUser } from "../../../../actions/users";
+import dayjsInstance from "@/utils/dayjs";
+import { useUser } from "@/hooks";
 
 export default function UsersPage({
   searchParams,
@@ -13,21 +13,9 @@ export default function UsersPage({
   searchParams?: any;
 }) {
   const { push, replace } = useRouter();
-  const [users, setUsers] = useState<any>([]);
   const [meta, setMeta] = useState({});
-  const pathname = usePathname();
   const parmas = useSearchParams();
-
-  const loadData = async() => {
-    const { data } = await paginateUser()
-    if(data) {
-      setUsers(data)
-    }
-  }
-  useEffect(() => {
-    loadData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { users } = useUser();
 
   const columns = [
 

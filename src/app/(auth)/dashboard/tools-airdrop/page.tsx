@@ -2,29 +2,20 @@
 
 import { Button, Col, Row, Space, Switch, Table } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import dayjsInstance from "../../../../utils/dayjs";
-import { paginateToolAirdrop } from "../../../../actions/tool";
+import React from "react";
+import dayjsInstance from "@/utils/dayjs";
+import { useToolAirdrop } from "@/hooks";
+
 
 export default function UsersPage({
   searchParams,
 }: {
   searchParams?: any;
 }) {
-  const { push, replace } = useRouter();
-  const [users, setUsers] = useState<any>([]);
+  const { push } = useRouter();
   const parmas = useSearchParams();
+  const { toolAirdrops } = useToolAirdrop()
 
-  const loadData = async() => {
-    const { data } = await paginateToolAirdrop()
-    if(data) {
-      setUsers(data)
-    }
-  }
-  useEffect(() => {
-    loadData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const columns = [
     {
@@ -81,7 +72,7 @@ export default function UsersPage({
       <div className="bg-white p-[40px] rounded-[6px]">
         <Table
           rowKey={(record) => record?.id + ""}
-          dataSource={users}
+          dataSource={toolAirdrops}
           columns={columns}
           pagination={{
             // total: meta?.total,

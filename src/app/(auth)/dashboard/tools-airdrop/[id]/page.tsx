@@ -1,12 +1,13 @@
 "use client";
 
 import { message } from "antd";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ToolAirdropForm } from "../../../../../components";
-import { runToolOKX } from "../../../../../actions/tool";
+import { ToolAirdropForm } from "@/components";
+import { runToolOKX } from "@/actions/tool";
+import { useAuth } from "@/hooks";
 
 export default function DetailBlogPage({ params }: { params: { id: string } }) {
+  const { currentUser } = useAuth()
   const [initialValues, setInitialValues] = useState<any>({});
   const id = params?.id;
 
@@ -19,7 +20,7 @@ export default function DetailBlogPage({ params }: { params: { id: string } }) {
 
   const handleSubmit = async (values: any) => {
     try {
-      const { mess, data } = await runToolOKX(values);
+      const { mess, data } = await runToolOKX(currentUser.id, values);
       if (data) message.info(mess);
     } catch (error) {
       message.error("Error server!");

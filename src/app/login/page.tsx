@@ -1,32 +1,13 @@
 "use client";
 import NextLink from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import { message } from "antd";
-import { Login } from "../../actions/auth";
-import { LoginForm, RegisterForm } from "../../components";
+import { LoginForm, RegisterForm } from "@/components";
+import { useAuth } from "@/hooks";
 
 export default function AuthForm() {
-  const { push } = useRouter();
+  const { login, loading } = useAuth()
   const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
 
-  const login = async (payload: any) => {
-    setLoading(true);
-    try {
-      const { token, mess } = await Login(payload);
-      if (!token) message.error(mess);
-      else {
-        Cookies.set("acc", token, { expires: 30 });
-        push("/dashboard");
-      }
-      setLoading(false);
-    } catch (e: any) {
-      message.error(`Error server: ${e}`);
-      setLoading(false);
-    }
-  };
   const register = () => {};
   return (
     <div

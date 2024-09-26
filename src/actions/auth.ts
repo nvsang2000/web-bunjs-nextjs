@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { decodedJWT, signJWT } from "./jwt";
 import prisma from "../lib/connectPrisma";
 
-export async function Login(infor: any) {
+export async function login(infor: any) {
   const { username, password } = infor;
 
   try {

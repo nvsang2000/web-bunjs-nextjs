@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-const JWT_SECRET = "lH89EjFf1X6aDsmaFpVrd1m1Ii9vu7oO";
+
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export async function checkToken(token: string) {
   try {
@@ -15,9 +16,11 @@ export async function checkToken(token: string) {
 export async function decodedJWT(token: string) {
   const resultToken = await checkToken(token);
   if (!resultToken) return null;
-  
+
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      userId: string;
+    };
     return decoded.userId;
   } catch (error) {
     return null;
